@@ -83,6 +83,7 @@ def uncompress_archives(folders, delete):
                     z.extractall(dirpath)
                     z.close()
                     to_remove_all += [item]
+                print("unzipped archive [%s]" % item)
 
     time.sleep(3)  # note: for some reason file does not get closed properly, assuming its due to glob.glob
 
