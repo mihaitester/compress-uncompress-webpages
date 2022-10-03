@@ -71,6 +71,7 @@ def compress_folders(folders, delete):
 
 
 def uncompress_archives(folders, delete):
+    # help: [ https://stackoverflow.com/questions/3451111/unzipping-files-in-python ]
     to_remove_all = []
     for folder in folders:
         print("unzipping websites from [%s]" % folder)
