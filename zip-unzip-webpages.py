@@ -29,7 +29,6 @@ def compress_folders(folders, delete):
                         for suffix in FOLDER_SUFFIXES:
                             if os.path.exists(basename + suffix):
                                 print("found webpage [%s]" % basename) # note: if we confirm it is a saved webpage with subfiles
-                                to_remove = []
                                 zipname = basename + suffix + ".zip"
                                 with zipfile.ZipFile(zipname, 'a') as z:
                                     for f in subitems:
