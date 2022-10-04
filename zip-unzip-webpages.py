@@ -98,7 +98,7 @@ def compress_folders(folders, delete):
                                                         print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING), str(ex).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)))
                                                         exceptions += [ex]
                                             z.close()
-                                    except:
+                                    except Exception as ex:
                                         print("Failed to create zipfile [%s] with exception [%s]" % (zipname.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING), str(ex).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)))
                                         exceptions += [ex]
                                 if len(exceptions) == 0:
