@@ -78,24 +78,14 @@ def uncompress_archives(folders, delete):
 
     # note: because of glob.glob need to do this after all archives are created
     if delete:
-        # for to_remove in to_remove_all:
-        if len(to_remove_all) > 0:
-            reversed_list = list(reversed(to_remove_all))
-            for f in reversed_list:
-                # for i in range(len(to_remove, 0, -1)):
-                # note: reverse the list and start removing items from the end
-                # note: avoiding `if os.path.isfile` in order to speed up removal, since most items will be files and not folders
-                try:
+        for f in to_remove_all:
+            try:
+                if os.path.isdir(f):
+                    shutil.rmtree(f)
+                else:
                     os.remove(f)
-                    # print("Failed to remove [%s] with exception [%s]" % (f, ex1))
-                except:
-                    print("Failed to remove [%s]" % f)
-                    try:
-                        os.rmdir(f)
-                    # except Exception as ex2:
-                    #     print("Failed to remove [%s] with exception [%s]" % (f, ex2))
-                    except:
-                        print("Failed to remove [%s]" % f)
+            except:
+                print("Failed to remove [%s]" % f)
 
 
 def menu():
