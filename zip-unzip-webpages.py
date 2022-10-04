@@ -100,7 +100,7 @@ def compress_folders(folders, delete):
                                                     try:
                                                         print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname), ex))
                                                     except:
-                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname.encode(SOURCE_ENCODING).decode(DESTINATION_ENCODING)), ex))
+                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname).encode(SOURCE_ENCODING).decode(DESTINATION_ENCODING), ex))
                                                     exceptions += [ex]
                                         z.close()
                                     if len(exceptions) == 0:
