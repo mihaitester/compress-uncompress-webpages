@@ -11,6 +11,36 @@ EXTENSIONS = [ ".htm", ".html" ]
 FOLDER_SUFFIXES = [ "_files" ]
 
 
+def timeit(f):
+    """
+    help: [ https://stackoverflow.com/questions/1622943/timeit-versus-timing-decorator ]
+    :param f:
+    :return:
+    """
+    def timed(*args, **kw):
+        ts = time.time()
+        print('>>> func:[{}] started @ [{}]'.format(f.__name__, ts))
+        result = f(*args, **kw)
+        te = time.time()
+        print('<<< func:[{}] ended @ [{}]'.format(f.__name__, te))
+        print('=== func:[{}] took: [{}]'.format(f.__name__, print_time(te - ts)))
+        return result
+    return timed
+
+
+def print_time(time):
+    miliseconds = time * 1000 % 1000
+    seconds = time % 60
+    time /= 60
+    minutes = time % 60
+    time /= 60
+    hours = time % 24
+    time /= 24
+    days = time
+    return "%ddays %.2d:%.2d:%.2d.%.3d" % (days, hours, minutes, seconds, miliseconds)
+
+
+@timeit
 def compress_folders(folders, delete):
     # todo: need to process files such that script guarantees non-nesting of websites archives inside each other - plain archives
     to_remove = []
@@ -63,6 +93,7 @@ def compress_folders(folders, delete):
                 print("Failed to remove [%s]" % item)
 
 
+@timeit
 def uncompress_archives(folders, delete):
     # help: [ https://stackoverflow.com/questions/3451111/unzipping-files-in-python ]
     to_remove_all = []
