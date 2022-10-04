@@ -35,7 +35,7 @@ def compress_folders(folders, delete):
                                     for f in subitems:
                                         if f != zipname: # note: since glob.glob is dynamic, it reloads the files which causes the newly created zipfile to be found
                                             filename = f.split(basedir)[1].lstrip("\\")
-                                            arcname = f.split(basedir)[1].lstrip("\\").replace("'","_")
+                                            arcname = filename
                                             try:
                                                 z.write(filename=os.path.join(basedir, filename), arcname=arcname)
                                                 excluded_files += [f]
