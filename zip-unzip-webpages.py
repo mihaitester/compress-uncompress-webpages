@@ -77,11 +77,7 @@ def compress_folders(folders, delete):
 
                         for suffix in FOLDER_SUFFIXES:
                             if os.path.exists(basename + suffix):
-                                try:
-                                    print("found webpage [{}]".format(basename)) # note: if we confirm it is a saved webpage with subfiles
-                                except:
-                                    # basename = sanitize_string(basename)
-                                    print("gotcha: [%s]" % basename.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))
+                                print("found webpage [%s]" % basename.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)) # note: if we confirm it is a saved webpage with subfiles
                                 exceptions = []
                                 zipname = basename + suffix + ".zip"
                                 if not os.path.exists(zipname):
@@ -97,10 +93,7 @@ def compress_folders(folders, delete):
                                                 except Exception as ex:
                                                     # todo: fix error code 3, which potentially appears due to MAX_PATH = 260 limitation in registry
                                                     # help: [ https://novaworks.knowledgeowl.com/help/how-to-fix-error-code-3 ]
-                                                    try:
-                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname), ex))
-                                                    except:
-                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING), str(ex).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)))
+                                                    print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING), str(ex).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)))
                                                     exceptions += [ex]
                                         z.close()
                                     if len(exceptions) == 0:
