@@ -5,10 +5,18 @@ import sys
 import time
 import zipfile
 import argparse
+import copy
+
+# help: [ https://stackoverflow.com/questions/6539881/python-converting-from-iso-8859-1-latin1-to-utf-8 ]
+# sys.setdefaultencoding('UTF-16')
+SOURCE_ENCODING = "UTF-16-le"
+# SOURCE_ENCODING = "ISO-8859-1" # "ISO-8859-2" # note: these are latin-1 and latin-2 char encodings # help: [ https://www.codegrepper.com/code-examples/python/UnicodeDecodeError%3A+%27utf-16-le%27+codec+can%27t+decode+bytes+in+position+60-61%3A+illegal+UTF-16+surrogate ]
+DESTINATION_ENCODING = "ISO-8859-1"
 
 
 EXTENSIONS = [ ".htm", ".html" ]
 FOLDER_SUFFIXES = [ "_files" ]
+
 
 
 def timeit(f):
@@ -40,7 +48,15 @@ def print_time(time):
     return "%ddays %.2d:%.2d:%.2d.%.3d" % (days, hours, minutes, seconds, miliseconds)
 
 
-ILLEGAL_CHARS = [ '\u021b', '\u0159', '\u0102', '\u0103', '\u0219', '\u2103' ]
+
+
+
+ILLEGAL_CHARS = [ '\u021a', '\u021b', '\u2103', '\u0159', '\u0102', '\u0103', '\u0219' ]
+def sanitize_string(string):
+    a_copy = copy.deepcopy(string)
+    for char in ILLEGAL_CHARS:
+        a_copy = a_copy.replace(char, "_")
+    return a_copy
 
 
 @timeit
@@ -64,11 +80,8 @@ def compress_folders(folders, delete):
                                 try:
                                     print("found webpage [{}]".format(basename)) # note: if we confirm it is a saved webpage with subfiles
                                 except:
-                                    illegal = basename
-                                    for char in ILLEGAL_CHARS:
-                                        illegal = illegal.replace(char, '_')
-                                    print("gotcha: [%s]" % illegal)
-                                    basename = illegal
+                                    # basename = sanitize_string(basename)
+                                    print("gotcha: [%s]" % basename.encode(SOURCE_ENCODING).decode(DESTINATION_ENCODING))
                                 exceptions = []
                                 zipname = basename + suffix + ".zip"
                                 if not os.path.exists(zipname):
@@ -76,10 +89,7 @@ def compress_folders(folders, delete):
                                         for f in subitems:
                                             if f != zipname: # note: since glob.glob is dynamic, it reloads the files which causes the newly created zipfile to be found
                                                 filename = f.split(basedir)[1].lstrip("\\")
-                                                illegal = filename
-                                                for char in ILLEGAL_CHARS:
-                                                    illegal = illegal.replace(char, "_")
-                                                filename = illegal
+                                                # filename = sanitize_string(filename)
                                                 arcname = filename
                                                 try:
                                                     z.write(filename=os.path.join(basedir, filename), arcname=arcname)
@@ -87,7 +97,10 @@ def compress_folders(folders, delete):
                                                 except Exception as ex:
                                                     # todo: fix error code 3, which potentially appears due to MAX_PATH = 260 limitation in registry
                                                     # help: [ https://novaworks.knowledgeowl.com/help/how-to-fix-error-code-3 ]
-                                                    print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname), ex))
+                                                    try:
+                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname), ex))
+                                                    except:
+                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname.encode(SOURCE_ENCODING).decode(DESTINATION_ENCODING)), ex))
                                                     exceptions += [ex]
                                         z.close()
                                     if len(exceptions) == 0:
@@ -176,5 +189,9 @@ def main():
     pass  # used for debug breakpoint
 
 if __name__ == "__main__":
+
+
+
     main()
 
+    pass
