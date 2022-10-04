@@ -40,6 +40,9 @@ def print_time(time):
     return "%ddays %.2d:%.2d:%.2d.%.3d" % (days, hours, minutes, seconds, miliseconds)
 
 
+ILLEGAL_CHARS = [ '\u021b', '\u0159', '\u0102', '\u0103', '\u0219', '\u2103' ]
+
+
 @timeit
 def compress_folders(folders, delete):
     # todo: need to process files such that script guarantees non-nesting of websites archives inside each other - plain archives
@@ -58,7 +61,14 @@ def compress_folders(folders, delete):
 
                         for suffix in FOLDER_SUFFIXES:
                             if os.path.exists(basename + suffix):
-                                print("found webpage [%s]" % basename) # note: if we confirm it is a saved webpage with subfiles
+                                try:
+                                    print("found webpage [{}]".format(basename)) # note: if we confirm it is a saved webpage with subfiles
+                                except:
+                                    illegal = basename
+                                    for char in ILLEGAL_CHARS:
+                                        illegal = illegal.replace(char, '_')
+                                    print("gotcha: [%s]" % illegal)
+                                    basename = illegal
                                 exceptions = []
                                 zipname = basename + suffix + ".zip"
                                 if not os.path.exists(zipname):
@@ -66,6 +76,10 @@ def compress_folders(folders, delete):
                                         for f in subitems:
                                             if f != zipname: # note: since glob.glob is dynamic, it reloads the files which causes the newly created zipfile to be found
                                                 filename = f.split(basedir)[1].lstrip("\\")
+                                                illegal = filename
+                                                for char in ILLEGAL_CHARS:
+                                                    illegal = illegal.replace(char, "_")
+                                                filename = illegal
                                                 arcname = filename
                                                 try:
                                                     z.write(filename=os.path.join(basedir, filename), arcname=arcname)
