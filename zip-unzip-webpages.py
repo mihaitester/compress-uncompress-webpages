@@ -61,7 +61,7 @@ def compress_folders(folders, delete):
                                 print("found webpage [%s]" % basename) # note: if we confirm it is a saved webpage with subfiles
                                 exceptions = []
                                 zipname = basename + suffix + ".zip"
-                                if not os.path.exists(zipname)
+                                if not os.path.exists(zipname):
                                     with zipfile.ZipFile(zipname, 'w') as z:
                                         for f in subitems:
                                             if f != zipname: # note: since glob.glob is dynamic, it reloads the files which causes the newly created zipfile to be found
