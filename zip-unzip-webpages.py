@@ -9,6 +9,7 @@ import copy
 
 # help: [ https://stackoverflow.com/questions/6539881/python-converting-from-iso-8859-1-latin1-to-utf-8 ]
 # sys.setdefaultencoding('UTF-16')
+# help: [ https://superuser.com/questions/670197/finding-out-the-default-character-encoding-in-windows ] - need to get the default encoding of the OS and use that as source encoding
 SOURCE_ENCODING = "UTF-16-le"
 # SOURCE_ENCODING = "ISO-8859-1" # "ISO-8859-2" # note: these are latin-1 and latin-2 char encodings # help: [ https://www.codegrepper.com/code-examples/python/UnicodeDecodeError%3A+%27utf-16-le%27+codec+can%27t+decode+bytes+in+position+60-61%3A+illegal+UTF-16+surrogate ]
 DESTINATION_ENCODING = "UTF-8"
