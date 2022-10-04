@@ -11,7 +11,7 @@ import copy
 # sys.setdefaultencoding('UTF-16')
 SOURCE_ENCODING = "UTF-16-le"
 # SOURCE_ENCODING = "ISO-8859-1" # "ISO-8859-2" # note: these are latin-1 and latin-2 char encodings # help: [ https://www.codegrepper.com/code-examples/python/UnicodeDecodeError%3A+%27utf-16-le%27+codec+can%27t+decode+bytes+in+position+60-61%3A+illegal+UTF-16+surrogate ]
-DESTINATION_ENCODING = "ISO-8859-1"
+DESTINATION_ENCODING = "UTF-8"
 
 
 EXTENSIONS = [ ".htm", ".html" ]
@@ -81,7 +81,7 @@ def compress_folders(folders, delete):
                                     print("found webpage [{}]".format(basename)) # note: if we confirm it is a saved webpage with subfiles
                                 except:
                                     # basename = sanitize_string(basename)
-                                    print("gotcha: [%s]" % basename.encode(SOURCE_ENCODING).decode(DESTINATION_ENCODING))
+                                    print("gotcha: [%s]" % basename.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))
                                 exceptions = []
                                 zipname = basename + suffix + ".zip"
                                 if not os.path.exists(zipname):
@@ -100,7 +100,7 @@ def compress_folders(folders, delete):
                                                     try:
                                                         print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname), ex))
                                                     except:
-                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname).encode(SOURCE_ENCODING).decode(DESTINATION_ENCODING), ex))
+                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING), str(ex).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)))
                                                     exceptions += [ex]
                                         z.close()
                                     if len(exceptions) == 0:
