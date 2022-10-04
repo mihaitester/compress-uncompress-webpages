@@ -1,5 +1,6 @@
 import os
 import glob
+import shutil
 import sys
 import time
 import zipfile
@@ -12,14 +13,15 @@ FOLDER_SUFFIXES = [ "_files" ]
 
 def compress_folders(folders, delete):
     # todo: need to process files such that script guarantees non-nesting of websites archives inside each other - plain archives
-    to_remove_all = []
+    to_remove = []
+    excluded_files = []
     for folder in folders:
         print("zipping websites from [%s]" % folder)
         items = list(glob.glob(folder + r"\**", recursive=True))
         for item in items:
-            if item not in to_remove_all: # note: ugly comparison that slows things down, but avoids bugs related to `glob` dynamic list
-                for ext in EXTENSIONS:
-                    if ext in "." + item.split(".")[-1]:
+            for ext in EXTENSIONS:
+                if item not in excluded_files: # note: ugly comparison that slows things down, but avoids bugs related to `glob` dynamic list
+                    if ext == "." + item.split(".")[-1]:
                         basename = item.split(ext)[0]
                         basedir = os.sep.join(basename.split(os.sep)[:-1])
                         subitems = [x for x in items if basename in x]
@@ -35,39 +37,25 @@ def compress_folders(folders, delete):
                                             arcname = f.split(basedir)[1].lstrip("\\")
                                             try:
                                                 z.write(filename=os.path.join(basedir, arcname), arcname=arcname)
-                                                to_remove += [f]
+                                                excluded_files += [f]
                                             except Exception as ex:
                                                 print("Hackers removed file [%s] with exception [%s]" % (os.path.join(folder, arcname), ex))
                                     z.close()
 
-                                to_remove_all += to_remove
-
-                                # note: remove files from index so they do not get reprocessed
-                                # for f in to_remove:
-                                #     items.remove(f)
+                                to_remove += [ basename + suffix, basename + ext ]
 
     time.sleep(3) # note: for some reason file does not get closed properly, assuming its due to glob.glob
 
     # note: because of glob.glob need to do this after all archives are created
     if delete:
-        # for to_remove in to_remove_all:
-            if len(to_remove_all) > 0:
-                reversed_list = list(reversed(to_remove_all))
-                for f in reversed_list:
-                    # for i in range(len(to_remove, 0, -1)):
-                    # note: reverse the list and start removing items from the end
-                    # note: avoiding `if os.path.isfile` in order to speed up removal, since most items will be files and not folders
-                    try:
-                        os.remove(f)
-                        # print("Failed to remove [%s] with exception [%s]" % (f, ex1))
-                    except:
-                        print("Failed to remove [%s]" % f)
-                        try:
-                            os.rmdir(f)
-                        # except Exception as ex2:
-                        #     print("Failed to remove [%s] with exception [%s]" % (f, ex2))
-                        except:
-                            print("Failed to remove [%s]" % f)
+        for item in to_remove:
+            try:
+                if os.path.isdir(item):
+                    shutil.rmtree(item)
+                else:
+                    os.remove(item)
+            except:
+                print("Failed to remove [%s]" % item)
 
 
 def uncompress_archives(folders, delete):
