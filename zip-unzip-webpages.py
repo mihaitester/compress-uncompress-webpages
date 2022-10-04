@@ -31,7 +31,7 @@ def compress_folders(folders, delete):
                                 print("found webpage [%s]" % basename) # note: if we confirm it is a saved webpage with subfiles
                                 to_remove = []
                                 zipname = basename + suffix + ".zip"
-                                with zipfile.ZipFile(zipname, 'w') as z:
+                                with zipfile.ZipFile(zipname, 'a') as z:
                                     for f in subitems:
                                         if f != zipname: # note: since glob.glob is dynamic, it reloads the files which causes the newly created zipfile to be found
                                             arcname = f.split(basedir)[1].lstrip("\\")
@@ -39,6 +39,8 @@ def compress_folders(folders, delete):
                                                 z.write(filename=os.path.join(basedir, arcname), arcname=arcname)
                                                 excluded_files += [f]
                                             except Exception as ex:
+                                                # todo: fix error code 3, which potentially appears due to MAX_PATH = 260 limitation in registry
+                                                # help: [ https://novaworks.knowledgeowl.com/help/how-to-fix-error-code-3 ]
                                                 print("Hackers removed file [%s] with exception [%s]" % (os.path.join(folder, arcname), ex))
                                     z.close()
 
