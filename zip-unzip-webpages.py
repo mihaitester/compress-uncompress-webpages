@@ -78,28 +78,32 @@ def compress_folders(folders, delete):
 
                         for suffix in FOLDER_SUFFIXES:
                             if os.path.exists(basename + suffix):
-                                print("found webpage [%s]" % basename.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)) # note: if we confirm it is a saved webpage with subfiles
+                                print("found webpage [%s]" % str(basename.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))) # note: if we confirm it is a saved webpage with subfiles
                                 exceptions = []
                                 zipname = basename + suffix + ".zip"
-                                if not os.path.exists(zipname):
-                                    with zipfile.ZipFile(zipname, 'w') as z:
-                                        for f in subitems:
-                                            if f != zipname: # note: since glob.glob is dynamic, it reloads the files which causes the newly created zipfile to be found
-                                                filename = f.split(basedir)[1].lstrip("\\")
-                                                # filename = sanitize_string(filename)
-                                                arcname = filename
-                                                try:
-                                                    z.write(filename=os.path.join(basedir, filename), arcname=arcname)
-                                                    excluded_files += [f]
-                                                except Exception as ex:
-                                                    # todo: fix error code 3, which potentially appears due to MAX_PATH = 260 limitation in registry
-                                                    # help: [ https://novaworks.knowledgeowl.com/help/how-to-fix-error-code-3 ]
-                                                    print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING), str(ex).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)))
-                                                    exceptions += [ex]
-                                        z.close()
-                                    if len(exceptions) == 0:
-                                        # remove the base files only if there are no exceptions
-                                        to_remove += [ basename + suffix, basename + ext ]
+                                if not os.path.exists(zipname) or os.stat(zipname).st_size == 0:
+                                    try:
+                                        with zipfile.ZipFile(zipname, 'w') as z:
+                                            for f in subitems:
+                                                if f != zipname: # note: since glob.glob is dynamic, it reloads the files which causes the newly created zipfile to be found
+                                                    filename = f.split(basedir)[1].lstrip("\\")
+                                                    # filename = sanitize_string(filename)
+                                                    arcname = filename
+                                                    try:
+                                                        z.write(filename=os.path.join(basedir, filename), arcname=arcname)
+                                                        excluded_files += [f]
+                                                    except Exception as ex:
+                                                        # todo: fix error code 3, which potentially appears due to MAX_PATH = 260 limitation in registry
+                                                        # help: [ https://novaworks.knowledgeowl.com/help/how-to-fix-error-code-3 ]
+                                                        print("Hackers removed file [%s] with exception [%s]" % (os.path.join(basedir, arcname).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING), str(ex).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)))
+                                                        exceptions += [ex]
+                                            z.close()
+                                    except:
+                                        print("Failed to create zipfile [%s] with exception [%s]" % (zipname.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING), str(ex).encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING)))
+                                        exceptions += [ex]
+                                if len(exceptions) == 0:
+                                    # remove the base files only if there are no exceptions
+                                    to_remove += [ basename + suffix, basename + ext ]
 
     time.sleep(3) # note: for some reason file does not get closed properly, assuming its due to glob.glob
 
@@ -111,6 +115,7 @@ def compress_folders(folders, delete):
                     shutil.rmtree(item)
                 else:
                     os.remove(item)
+                print("Removed [%s]" % item)
             except:
                 print("Failed to remove [%s]" % item)
 
