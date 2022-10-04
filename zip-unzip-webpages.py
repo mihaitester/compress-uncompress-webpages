@@ -115,9 +115,9 @@ def compress_folders(folders, delete):
                     shutil.rmtree(item)
                 else:
                     os.remove(item)
-                print("Removed [%s]" % item)
+                print("Removed [%s]" % item.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))
             except:
-                print("Failed to remove [%s]" % item)
+                print("Failed to remove [%s]" % item.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))
 
 
 @timeit
@@ -135,9 +135,9 @@ def uncompress_archives(folders, delete):
                     with zipfile.ZipFile(item, 'r') as z:
                         z.extractall(dirpath)
                     to_remove_all += [item]
-                    print("unzipped archive [%s]" % item)
+                    print("unzipped archive [%s]" % item.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))
                 except:
-                    print("encountered exception while unzipping [%s]" % item)
+                    print("encountered exception while unzipping [%s]" % item.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))
 
     time.sleep(3)  # note: for some reason file does not get closed properly, assuming its due to glob.glob
 
@@ -149,8 +149,9 @@ def uncompress_archives(folders, delete):
                     shutil.rmtree(f)
                 else:
                     os.remove(f)
+                print("Removed [%s]" % f.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))
             except:
-                print("Failed to remove [%s]" % f)
+                print("Failed to remove [%s]" % f.encode(SOURCE_ENCODING).decode(SOURCE_ENCODING).encode(DESTINATION_ENCODING))
 
 
 def menu():
