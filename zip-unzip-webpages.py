@@ -64,7 +64,7 @@ def uncompress_archives(folders, delete):
     for folder in folders:
         print("unzipping websites from [%s]" % folder)
         for suffix in FOLDER_SUFFIXES:
-            items = list(glob.glob(folder + r"\**" + suffix + ".zip", recursive=True)) # note: do not unpack all zip files, only ones that were containing websites
+            items = list(glob.glob(folder + r"\**\**" + suffix + ".zip", recursive=True)) # note: do not unpack all zip files, only ones that were containing websites
             # todo: could peek inside archive and if it has structure of [ {webpage}, {webpage}_files ] then unzip it
             for item in items:
                 dirpath = os.path.abspath(os.path.dirname(item))
