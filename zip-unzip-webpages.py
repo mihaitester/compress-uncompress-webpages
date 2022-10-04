@@ -73,11 +73,13 @@ def uncompress_archives(folders, delete):
             # todo: could peek inside archive and if it has structure of [ {webpage}, {webpage}_files ] then unzip it
             for item in items:
                 dirpath = os.path.abspath(os.path.dirname(item))
-                with zipfile.ZipFile(item, 'r') as z:
-                    z.extractall(dirpath)
-                    z.close()
+                try:
+                    with zipfile.ZipFile(item, 'r') as z:
+                        z.extractall(dirpath)
                     to_remove_all += [item]
-                print("unzipped archive [%s]" % item)
+                    print("unzipped archive [%s]" % item)
+                except:
+                    print("encountered exception while unzipping [%s]" % item)
 
     time.sleep(3)  # note: for some reason file does not get closed properly, assuming its due to glob.glob
 
